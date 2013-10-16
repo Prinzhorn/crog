@@ -44,16 +44,14 @@
 		var _this = this;
 
 		this.image.onload = function() {
-			setTimeout(function() {
-				_this.imageRatio = _this.image.clientWidth / _this.image.clientHeight;
-				_this.needsCrop = _this.imageRatio !== _this.containerRatio;
+			_this.imageRatio = _this.image.naturalWidth / _this.image.naturalHeight;
+			_this.needsCrop = _this.imageRatio !== _this.containerRatio;
 
-				if(!fn || fn.call(_this) !== false) {
-					_this.image.style.visibility = 'visible';
-					_this.loaded = true;
-					_this.resizeImage();
-				}
-			}, 0);
+			if(!fn || fn.call(_this) !== false) {
+				_this.image.style.visibility = 'visible';
+				_this.loaded = true;
+				_this.resizeImage();
+			}
 		};
 
 		this.image.style.visibility = 'hidden';
