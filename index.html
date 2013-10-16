@@ -20,6 +20,7 @@
 <body>
 	<label for="image">Change image</label>
 	<select id="image">
+		<option value="">Choose an image...</option>
 		<option value="http://placekitten.com/800/400">800x400</option>
 		<option value="http://placekitten.com/400/800">400x800</option>
 		<option value="http://placekitten.com/800/800">800x800</option>
@@ -34,9 +35,12 @@
 	<script type="text/javascript" src="crog.js"></script>
 	<script type="text/javascript">
 	var crog = new Crog(document.getElementById('crog-it'), 256);
-	crog.setURL('http://placekitten.com/800/400');
 
 	document.querySelector('select').addEventListener('change', function() {
+		if(!this.value) {
+			return;
+		}
+
 		crog.setURL(this.value, function() {
 			if(!crog.needsCrop) {
 				alert("Doesn't need cropping, you'd probably just skip the cropping dialog for this image.");

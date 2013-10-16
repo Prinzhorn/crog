@@ -21,6 +21,7 @@
 		this.image = document.createElement('img');
 		this.image.className = 'crog-image';
 		this.image.style.position = 'absolute';
+		this.image.style.display = 'block';
 
 		this.container.appendChild(this.image);
 		this.parent.appendChild(this.container);
