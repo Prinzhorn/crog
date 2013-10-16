@@ -4,6 +4,8 @@
 			height = width;
 		}
 
+		this.containerWidth = width;
+		this.containerHeight = height;
 		this.containerRatio = width / height;
 
 		this.parent = parent;
@@ -42,19 +44,24 @@
 		var _this = this;
 
 		this.image.onload = function() {
+			_this.image.style.display = 'block';
 			_this.loaded = true;
 			_this.resizeImage();
 		};
 
+		this.image.style.display = 'none';
 		this.image.src = url;
 	};
 
 	Crog.fn.getRect = function() {
+		var left = Math.abs(parseInt(this.image.style.left, 10));
+		var top = Math.abs(parseInt(this.image.style.top, 10));
+
 		return {
-			top: 0,
-			right: 0,
-			bottom: 0,
-			left: 0
+			top: top,
+			right: left + this.containerWidth,
+			bottom: top + this.containerHeight,
+			left: left
 		};
 	};
 
@@ -74,6 +81,10 @@
 	Crog.fn.handleEvent = function(e) {
 		e.preventDefault();
 
+		if(!this.loaded) {
+			return;
+		}
+
 		switch(e.type) {
 			case 'mousedown':
 			case 'touchstart':
@@ -90,11 +101,13 @@
 					return;
 				}
 
-				var dx = e.pageX - this.startX;
-				var dy = e.pageY - this.startY;
+				var dX = e.pageX - this.startX;
+				var dY = e.pageY - this.startY;
+				var targetX = Math.max(Math.min(this.startImageX + dX, 0), this.containerWidth - this.image.clientWidth);
+				var targetY = Math.max(Math.min(this.startImageY + dY, 0), this.containerHeight - this.image.clientHeight);
 
-				this.image.style.left = (this.startImageX + dx) + 'px';
-				this.image.style.top = (this.startImageY + dy) + 'px';
+				this.image.style.left = targetX + 'px';
+				this.image.style.top = targetY + 'px';
 
 				return;
 
@@ -115,9 +128,10 @@
 		this.container.addEventListener('touchstart', this, false);
 		this.container.addEventListener('mousemove', this, false);
 		this.container.addEventListener('touchmove', this, false);
-		this.container.addEventListener('mouseup', this, false);
-		this.container.addEventListener('touchend', this, false);
-		this.container.addEventListener('touchcancel', this, false);
+
+		window.addEventListener('mouseup', this, false);
+		window.addEventListener('touchend', this, false);
+		window.addEventListener('touchcancel', this, false);
 	};
 
 

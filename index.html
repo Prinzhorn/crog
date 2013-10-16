@@ -17,7 +17,11 @@
 	<script type="text/javascript" src="crog.js"></script>
 	<script type="text/javascript">
 	var crog = new Crog(document.body, 256);
-	crog.setURL('http://placekitten.com/800/600');
+	crog.setURL('http://placekitten.com/800/400');
+
+	setInterval(function() {
+		console.log(crog.getRect());
+	}, 500);
 	</script>
 </body>
 
