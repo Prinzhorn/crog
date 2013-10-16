@@ -21,7 +21,6 @@
 		this.image = document.createElement('img');
 		this.image.className = 'crog-image';
 		this.image.style.position = 'absolute';
-		this.image.style.left = this.image.style.top = 0;
 
 		this.container.appendChild(this.image);
 		this.parent.appendChild(this.container);
@@ -38,18 +37,23 @@
 		this.image = undefined;
 	};
 
-	Crog.fn.setURL = function(url) {
+	Crog.fn.setURL = function(url, fn) {
 		this.loaded = false;
 
 		var _this = this;
 
 		this.image.onload = function() {
-			_this.image.style.display = 'block';
-			_this.loaded = true;
-			_this.resizeImage();
+			_this.imageRatio = _this.image.clientWidth / _this.image.clientHeight;
+			_this.needsCrop = _this.imageRatio !== _this.containerRatio;
+
+			if(!fn || fn.call(_this) !== false) {
+				_this.image.style.visibility = 'visible';
+				_this.loaded = true;
+				_this.resizeImage();
+			}
 		};
 
-		this.image.style.display = 'none';
+		this.image.style.visibility = 'hidden';
 		this.image.src = url;
 	};
 
@@ -68,10 +72,9 @@
 	Crog.fn.resizeImage = function() {
 		this.image.style.width = 'auto';
 		this.image.style.height = 'auto';
+		this.image.style.left = this.image.style.top = 0;
 
-		var imageRatio = this.image.clientWidth / this.image.clientHeight;
-
-		if(imageRatio > this.containerRatio) {
+		if(this.imageRatio > this.containerRatio) {
 			this.image.style.height = '100%';
 		} else {
 			this.image.style.width = '100%';
@@ -85,12 +88,23 @@
 			return;
 		}
 
+		var pageX;
+		var pageY;
+
+		if(e.touches && e.touches.length) {
+			pageX = e.touches[0].pageX;
+			pageY = e.touches[0].pageY;
+		} else {
+			pageX = e.pageX;
+			pageY = e.pageY;
+		}
+
 		switch(e.type) {
 			case 'mousedown':
 			case 'touchstart':
 				this.drag = true;
-				this.startX = e.pageX;
-				this.startY = e.pageY;
+				this.startX = pageX;
+				this.startY = pageY;
 				this.startImageX = parseInt(this.image.style.left, 10);
 				this.startImageY = parseInt(this.image.style.top, 10);
 				return;
@@ -101,8 +115,8 @@
 					return;
 				}
 
-				var dX = e.pageX - this.startX;
-				var dY = e.pageY - this.startY;
+				var dX = pageX - this.startX;
+				var dY = pageY - this.startY;
 				var targetX = Math.max(Math.min(this.startImageX + dX, 0), this.containerWidth - this.image.clientWidth);
 				var targetY = Math.max(Math.min(this.startImageY + dY, 0), this.containerHeight - this.image.clientHeight);
 
@@ -115,13 +129,11 @@
 			case 'touchend':
 			case 'touchcancel':
 				this.drag = false;
-
 				return;
 		}
 	};
 
 	Crog.fn.bindEvents = function() {
-		this.container.addEventListener('dragstart', this, false);
 		this.container.addEventListener('dragstart', this, false);
 
 		this.container.addEventListener('mousedown', this, false);

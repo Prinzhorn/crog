@@ -7,6 +7,10 @@
 	<title>Page title</title>
 
 	<style type="text/css">
+	body {
+		text-align:center;
+	}
+
 	.crog-container {
 		margin:1em auto;
 	}
@@ -14,14 +18,36 @@
 </head>
 
 <body>
+	<label for="image">Change image</label>
+	<select id="image">
+		<option value="http://placekitten.com/800/400">800x400</option>
+		<option value="http://placekitten.com/400/800">400x800</option>
+		<option value="http://placekitten.com/800/800">800x800</option>
+	</select>
+
+	<div id="crog-it"></div>
+
+	<p>
+		<button type="button">Crop it!</button>
+	</p>
+
 	<script type="text/javascript" src="crog.js"></script>
 	<script type="text/javascript">
-	var crog = new Crog(document.body, 256);
+	var crog = new Crog(document.getElementById('crog-it'), 256);
 	crog.setURL('http://placekitten.com/800/400');
 
-	setInterval(function() {
-		console.log(crog.getRect());
-	}, 500);
+	document.querySelector('select').addEventListener('change', function() {
+		crog.setURL(this.value, function() {
+			if(!crog.needsCrop) {
+				alert("Doesn't need cropping, you'd probably just skip the cropping dialog for this image.");
+				return false;
+			}
+		});
+	}, false);
+
+	document.querySelector('button').addEventListener('click', function() {
+		alert('Now you could send this along to your server:\n' + JSON.stringify(crog.getRect(), null, 4));
+	}, false);
 	</script>
 </body>
 
