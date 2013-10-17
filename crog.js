@@ -139,19 +139,19 @@
 	};
 
 	Crog.fn.bindEvents = function() {
-		this.container.addEventListener('dragstart', this, false);
+		this.addEvent(this.container, 'dragstart', this, false);
 
-		this.container.addEventListener('mousedown', this, false);
-		this.container.addEventListener('touchstart', this, false);
-		this.container.addEventListener('mousemove', this, false);
-		this.container.addEventListener('touchmove', this, false);
+		this.addEvent(this.container, 'mousedown', this, false);
+		this.addEvent(this.container, 'touchstart', this, false);
+		this.addEvent(this.container, 'mousemove', this, false);
+		this.addEvent(this.container, 'touchmove', this, false);
 
-		window.addEventListener('mouseup', this, false);
-		window.addEventListener('touchend', this, false);
-		window.addEventListener('touchcancel', this, false);
+		this.addEvent(window, 'mouseup', this, false);
+		this.addEvent(window, 'touchend', this, false);
+		this.addEvent(window, 'touchcancel', this, false);
 	};
 
-	Crog.fn.addEvent = function(name, element, callback) {
+	Crog.fn.addEvent = function(element, name, callback) {
 		if(element.addEventListener) {
 			element.addEventListener(name, callback, false);
 		} else {
