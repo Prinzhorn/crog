@@ -83,7 +83,11 @@
 	};
 
 	Crog.fn.handleEvent = function(e) {
-		e.preventDefault();
+		if(e.preventDefault) {
+			e.preventDefault();
+		} else {
+			e.returnValue = false;
+		}
 
 		if(!this.loaded) {
 			return;
@@ -147,5 +151,12 @@
 		window.addEventListener('touchcancel', this, false);
 	};
 
+	Crog.fn.addEvent = function(name, element, callback) {
+		if(element.addEventListener) {
+			element.addEventListener(name, callback, false);
+		} else {
+			element.attachEvent('on' + name, callback);
+		}
+	};
 
 }(window));
