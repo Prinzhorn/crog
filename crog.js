@@ -62,11 +62,22 @@
 		var left = Math.abs(parseInt(this.image.style.left, 10));
 		var top = Math.abs(parseInt(this.image.style.top, 10));
 
+		var scaledImageWidth;
+		var scaledImageHeight;
+
+		if(this.imageRatio > this.containerRatio) {
+			scaledImageHeight = this.containerHeight;
+			scaledImageWidth = scaledImageHeight * this.imageRatio;
+		} else {
+			scaledImageWidth = this.containerWidth;
+			scaledImageHeight = scaledImageWidth / this.imageRatio;
+		}
+
 		return {
-			top: top,
-			right: left + this.containerWidth,
-			bottom: top + this.containerHeight,
-			left: left
+			top: top / scaledImageHeight,
+			right: (left + this.containerWidth) / scaledImageWidth,
+			bottom: (top + this.containerHeight) / scaledImageHeight,
+			left: left / scaledImageWidth
 		};
 	};
 
