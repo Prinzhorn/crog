@@ -26,6 +26,9 @@
 		<option value="http://placekitten.com/800/800">800x800</option>
 		<option value="http://placekitten.com/1000/400">1000x400</option>
 	</select>
+	<label>
+		<input type="checkbox" /> Fit
+	</label>
 
 	<div id="crog-it"></div>
 
@@ -45,9 +48,12 @@
 		crog.setURL(this.value, function() {
 			if(!crog.needsCrop) {
 				alert("Doesn't need cropping, you'd probably just skip the cropping dialog for this image.");
-				return false;
 			}
 		});
+	}, false);
+
+	document.querySelector('input[type="checkbox"]').addEventListener('change', function(e) {
+		crog.setFit(e.target.checked);
 	}, false);
 
 	document.querySelector('button').addEventListener('click', function() {

@@ -7,6 +7,7 @@
 		this.containerWidth = width;
 		this.containerHeight = height;
 		this.containerRatio = width / height;
+		this.fit = false;
 
 		this.parent = parent;
 
@@ -58,7 +59,16 @@
 		this.image.src = url;
 	};
 
+	Crog.fn.setFit = function(fit) {
+		this.fit = fit;
+		this.resizeImage();
+	};
+
 	Crog.fn.getRect = function() {
+		if(this.fit) {
+			throw 'You cannot call getRect when in fitting mode.';
+		}
+
 		var left = Math.abs(parseInt(this.image.style.left, 10));
 		var top = Math.abs(parseInt(this.image.style.top, 10));
 
@@ -75,18 +85,16 @@
 		this.image.style.height = 'auto';
 		this.image.style.left = this.image.style.top = 0;
 
-		if(this.imageRatio > this.containerRatio) {
+		if((this.imageRatio > this.containerRatio && !this.fit) || (this.imageRatio < this.containerRatio && this.fit)) {
 			this.scaledImageHeight = this.containerHeight;
 			this.scaledImageWidth = this.scaledImageHeight * this.imageRatio;
-		} else {
-			this.scaledImageWidth = this.containerWidth;
-			this.scaledImageHeight = this.scaledImageWidth / this.imageRatio;
-		}
 
-		if(this.imageRatio > this.containerRatio) {
 			this.image.style.height = '100%';
 			this.image.style.left = ((this.containerWidth - this.scaledImageWidth) / 2) + 'px';
 		} else {
+			this.scaledImageWidth = this.containerWidth;
+			this.scaledImageHeight = this.scaledImageWidth / this.imageRatio;
+
 			this.image.style.width = '100%';
 			this.image.style.top = ((this.containerHeight - this.scaledImageHeight) / 2) + 'px';
 		}
@@ -99,7 +107,7 @@
 			e.returnValue = false;
 		}
 
-		if(!this.loaded) {
+		if(!this.loaded || this.fit) {
 			return;
 		}
 
