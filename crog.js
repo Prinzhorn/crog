@@ -61,6 +61,9 @@
 
 	Crog.fn.setFit = function(fit) {
 		this.fit = fit;
+
+		this.container.style.cursor = this.fit ? '' : 'move';
+
 		this.resizeImage();
 	};
 
