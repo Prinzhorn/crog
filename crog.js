@@ -62,22 +62,11 @@
 		var left = Math.abs(parseInt(this.image.style.left, 10));
 		var top = Math.abs(parseInt(this.image.style.top, 10));
 
-		var scaledImageWidth;
-		var scaledImageHeight;
-
-		if(this.imageRatio > this.containerRatio) {
-			scaledImageHeight = this.containerHeight;
-			scaledImageWidth = scaledImageHeight * this.imageRatio;
-		} else {
-			scaledImageWidth = this.containerWidth;
-			scaledImageHeight = scaledImageWidth / this.imageRatio;
-		}
-
 		return {
-			top: top / scaledImageHeight,
-			right: (left + this.containerWidth) / scaledImageWidth,
-			bottom: (top + this.containerHeight) / scaledImageHeight,
-			left: left / scaledImageWidth
+			top: top / this.scaledImageHeight,
+			right: (left + this.containerWidth) / this.scaledImageWidth,
+			bottom: (top + this.containerHeight) / this.scaledImageHeight,
+			left: left / this.scaledImageWidth
 		};
 	};
 
@@ -87,9 +76,19 @@
 		this.image.style.left = this.image.style.top = 0;
 
 		if(this.imageRatio > this.containerRatio) {
+			this.scaledImageHeight = this.containerHeight;
+			this.scaledImageWidth = this.scaledImageHeight * this.imageRatio;
+		} else {
+			this.scaledImageWidth = this.containerWidth;
+			this.scaledImageHeight = this.scaledImageWidth / this.imageRatio;
+		}
+
+		if(this.imageRatio > this.containerRatio) {
 			this.image.style.height = '100%';
+			this.image.style.left = ((this.containerWidth - this.scaledImageWidth) / 2) + 'px';
 		} else {
 			this.image.style.width = '100%';
+			this.image.style.top = ((this.containerHeight - this.scaledImageHeight) / 2) + 'px';
 		}
 	};
 
