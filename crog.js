@@ -57,6 +57,11 @@
 
 		this.image.style.visibility = 'hidden';
 		this.image.src = url;
+
+		//Is it already loaded?
+		if(this.image.naturalWidth > 0) {
+			this.image.onload();
+		}
 	};
 
 	Crog.fn.setFit = function(fit) {
@@ -84,23 +89,44 @@
 	};
 
 	Crog.fn.resizeImage = function() {
-		this.image.style.width = 'auto';
-		this.image.style.height = 'auto';
-		this.image.style.left = this.image.style.top = 0;
+		var _this = this;
 
-		if((this.imageRatio > this.containerRatio && !this.fit) || (this.imageRatio < this.containerRatio && this.fit)) {
-			this.scaledImageHeight = this.containerHeight;
-			this.scaledImageWidth = this.scaledImageHeight * this.imageRatio;
+		_this.disableTransitions();
 
-			this.image.style.height = '100%';
-			this.image.style.left = ((this.containerWidth - this.scaledImageWidth) / 2) + 'px';
-		} else {
-			this.scaledImageWidth = this.containerWidth;
-			this.scaledImageHeight = this.scaledImageWidth / this.imageRatio;
+		_this.image.style.width = 'auto';
+		_this.image.style.height = 'auto';
+		_this.image.style.left = _this.image.style.top = 0;
 
-			this.image.style.width = '100%';
-			this.image.style.top = ((this.containerHeight - this.scaledImageHeight) / 2) + 'px';
+		window.setTimeout(function() {
+			_this.enableTransitions();
+
+			if((_this.imageRatio > _this.containerRatio && !_this.fit) || (_this.imageRatio < _this.containerRatio && _this.fit)) {
+				_this.scaledImageHeight = _this.containerHeight;
+				_this.scaledImageWidth = _this.scaledImageHeight * _this.imageRatio;
+
+				_this.image.style.height = '100%';
+				_this.image.style.left = ((_this.containerWidth - _this.scaledImageWidth) / 2) + 'px';
+			} else {
+				_this.scaledImageWidth = _this.containerWidth;
+				_this.scaledImageHeight = _this.scaledImageWidth / _this.imageRatio;
+
+				_this.image.style.width = '100%';
+				_this.image.style.top = ((_this.containerHeight - _this.scaledImageHeight) / 2) + 'px';
+			}
+		}, 0);
+	};
+
+
+	Crog.fn.enableTransitions = function() {
+		if(this.fit) {
+			return;
 		}
+
+		this.image.style.transition = this.image.style.webkitTransition = 'left 1s, top 1s';
+	};
+
+	Crog.fn.disableTransitions = function() {
+		this.image.style.transition = this.image.style.webkitTransition = 'left 0s, top 0s';
 	};
 
 	Crog.fn.handleEvent = function(e) {
@@ -135,6 +161,7 @@
 				this.startY = pageY;
 				this.startImageX = parseInt(this.image.style.left, 10);
 				this.startImageY = parseInt(this.image.style.top, 10);
+				this.disableTransitions();
 				return;
 
 			case 'mousemove':
