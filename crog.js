@@ -104,10 +104,12 @@
 	};
 
 	Crog.fn.handleEvent = function(e) {
-		if(e.preventDefault) {
-			e.preventDefault();
-		} else {
-			e.returnValue = false;
+		if(e.target !== window) {
+			if(e.preventDefault) {
+				e.preventDefault();
+			} else {
+				e.returnValue = false;
+			}
 		}
 
 		if(!this.loaded || this.fit) {
@@ -160,16 +162,16 @@
 	};
 
 	Crog.fn.bindEvents = function() {
-		this.addEvent(this.container, 'dragstart', this, false);
+		this.addEvent(this.container, 'dragstart', this);
 
-		this.addEvent(this.container, 'mousedown', this, false);
-		this.addEvent(this.container, 'touchstart', this, false);
-		this.addEvent(this.container, 'mousemove', this, false);
-		this.addEvent(this.container, 'touchmove', this, false);
+		this.addEvent(this.container, 'mousedown', this);
+		this.addEvent(this.container, 'touchstart', this);
+		this.addEvent(this.container, 'mousemove', this);
+		this.addEvent(this.container, 'touchmove', this);
 
-		this.addEvent(window, 'mouseup', this, false);
-		this.addEvent(window, 'touchend', this, false);
-		this.addEvent(window, 'touchcancel', this, false);
+		this.addEvent(window, 'mouseup', this);
+		this.addEvent(window, 'touchend', this);
+		this.addEvent(window, 'touchcancel', this);
 	};
 
 	Crog.fn.addEvent = function(element, name, callback) {
