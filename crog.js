@@ -57,11 +57,6 @@
 
 		this.image.style.visibility = 'hidden';
 		this.image.src = url;
-
-		//Is it already loaded?
-		if(this.image.naturalWidth > 0) {
-			this.image.onload();
-		}
 	};
 
 	Crog.fn.setFit = function(fit) {
