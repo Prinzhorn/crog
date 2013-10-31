@@ -7,6 +7,8 @@
 		this.containerWidth = width;
 		this.containerHeight = height;
 		this.containerRatio = width / height;
+		this.imageX = 0;
+		this.imageY = 0;
 		this.fit = false;
 
 		this.parent = parent;
@@ -23,6 +25,7 @@
 		this.image.className = 'crog-image';
 		this.image.style.position = 'absolute';
 		this.image.style.display = 'block';
+		this.image.style.left = this.image.style.top = 0;
 
 		this.container.appendChild(this.image);
 		this.parent.appendChild(this.container);
@@ -72,8 +75,8 @@
 			throw 'You cannot call getRect when in fitting mode.';
 		}
 
-		var left = Math.abs(parseInt(this.image.style.left, 10));
-		var top = Math.abs(parseInt(this.image.style.top, 10));
+		var left = this.imageX;
+		var top = this.imageY;
 
 		return {
 			top: top / this.scaledImageHeight,
@@ -86,42 +89,49 @@
 	Crog.fn.resizeImage = function() {
 		var _this = this;
 
-		_this.disableTransitions();
-
 		_this.image.style.width = 'auto';
 		_this.image.style.height = 'auto';
-		_this.image.style.left = _this.image.style.top = 0;
+		_this.imageX = _this.imageY = 0;
+
+		_this.disableTransitions();
+		_this.transformImage();
 
 		window.setTimeout(function() {
-			_this.enableTransitions();
-
 			if((_this.imageRatio > _this.containerRatio && !_this.fit) || (_this.imageRatio < _this.containerRatio && _this.fit)) {
 				_this.scaledImageHeight = _this.containerHeight;
 				_this.scaledImageWidth = _this.scaledImageHeight * _this.imageRatio;
 
 				_this.image.style.height = '100%';
-				_this.image.style.left = ((_this.containerWidth - _this.scaledImageWidth) / 2) + 'px';
+				_this.imageX = ((_this.containerWidth - _this.scaledImageWidth) / 2);
 			} else {
 				_this.scaledImageWidth = _this.containerWidth;
 				_this.scaledImageHeight = _this.scaledImageWidth / _this.imageRatio;
 
 				_this.image.style.width = '100%';
-				_this.image.style.top = ((_this.containerHeight - _this.scaledImageHeight) / 2) + 'px';
+				_this.imageY = ((_this.containerHeight - _this.scaledImageHeight) / 2);
 			}
+
+			_this.enableTransitions();
+			_this.transformImage();
 		}, 0);
 	};
 
+	Crog.fn.transformImage = function() {
+		this.image.style.transform = this.image.style.webkitTransform = 'translate(' + this.imageX + 'px, ' + this.imageY + 'px)';
+	};
 
 	Crog.fn.enableTransitions = function() {
 		if(this.fit) {
 			return;
 		}
 
-		this.image.style.transition = this.image.style.webkitTransition = 'left 1s, top 1s';
+		this.image.style.webkitTransition = '-webkit-transform 1s';
+		this.image.style.transition = 'transform 1s';
 	};
 
 	Crog.fn.disableTransitions = function() {
-		this.image.style.transition = this.image.style.webkitTransition = 'left 0s, top 0s';
+		this.image.style.webkitTransition = '-webkit-transform 0s';
+		this.image.style.transition = 'transform 0s';
 	};
 
 	Crog.fn.handleEvent = function(e) {
@@ -154,8 +164,8 @@
 				this.drag = true;
 				this.startX = pageX;
 				this.startY = pageY;
-				this.startImageX = parseInt(this.image.style.left, 10);
-				this.startImageY = parseInt(this.image.style.top, 10);
+				this.startImageX = this.imageX;
+				this.startImageY = this.imageY;
 				this.disableTransitions();
 				return;
 
@@ -167,11 +177,10 @@
 
 				var dX = pageX - this.startX;
 				var dY = pageY - this.startY;
-				var targetX = Math.max(Math.min(this.startImageX + dX, 0), this.containerWidth - this.image.clientWidth);
-				var targetY = Math.max(Math.min(this.startImageY + dY, 0), this.containerHeight - this.image.clientHeight);
+				this.imageX = Math.max(Math.min(this.startImageX + dX, 0), this.containerWidth - this.image.clientWidth);
+				this.imageY = Math.max(Math.min(this.startImageY + dY, 0), this.containerHeight - this.image.clientHeight);
 
-				this.image.style.left = targetX + 'px';
-				this.image.style.top = targetY + 'px';
+				this.transformImage();
 
 				return;
 
