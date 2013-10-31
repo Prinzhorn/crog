@@ -75,8 +75,8 @@
 			throw 'You cannot call getRect when in fitting mode.';
 		}
 
-		var left = this.imageX;
-		var top = this.imageY;
+		var left = Math.abs(this.imageX);
+		var top = Math.abs(this.imageY);
 
 		return {
 			top: top / this.scaledImageHeight,
