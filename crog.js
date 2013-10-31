@@ -125,7 +125,7 @@
 	};
 
 	Crog.fn.handleEvent = function(e) {
-		if(e.target !== window) {
+		if(e.target === this.container || e.target === this.image) {
 			if(e.preventDefault) {
 				e.preventDefault();
 			} else {
@@ -188,6 +188,7 @@
 
 		this.addEvent(this.container, 'mousedown', this);
 		this.addEvent(this.container, 'touchstart', this);
+
 		this.addEvent(this.container, 'mousemove', this);
 		this.addEvent(this.container, 'touchmove', this);
 
